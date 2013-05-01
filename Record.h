@@ -4,19 +4,20 @@
 #define MIN_StuID_LENGTH 8
 #define MAX_StuID_LENGTH 8
 #define MAX_StuName_LENGTH 32
+#define MIN_StuYear 1
+#define MAX_StuYear 3
 #define MIN_CourseCode_LENGTH 7
 #define MAX_CourseName_LENGTH 32
 #define MAX_CourseCode_LENGTH 8
 #define CourseCodePrefix_LENGTH 4
+#define MIN_CREDIT 0
+#define MAX_CREDIT 5
+#define NA_EXAM_MARK 999
 #define MIN_EXAM_MARK 0
 #define MAX_EXAM_MARK 100
 
 #include <string>
 using namespace std;
-
-enum Year {first_year, second_year, third_year};
-enum Gender {male, female};
-enum Credit {zero, one, two, three, four, five};
 
 class Record
 {
@@ -27,7 +28,7 @@ public:
 class Student : public Record
 {
 public:
-    Student(string id, string n, Year y, Gender g) :
+    Student(string id, string n, unsigned int y, char g) :
         ID(id), name(n), year(y), gender(g) {}
 
     unsigned int getKey() const {
@@ -41,8 +42,8 @@ public:
 
     string getID() const {return ID;}
     string getName() const {return name;}
-    Year getYear() const {return year;}
-    Gender getGender() const {return gender;}
+    unsigned int getYear() const {return year;}
+    char getGender() const {return gender;}
 
     bool operator==(Student s) {return !ID.compare(s.ID);}
     bool operator!=(Student s) {return !((*this) == s);}
@@ -51,14 +52,14 @@ public:
 private:
     string ID;
     string name;
-    Year year;
-    Gender gender;
+    unsigned int year;
+    char gender;
 };
 
 class Course : public Record
 {
 public:
-    Course(string c, string n, Credit cd) :
+    Course(string c, string n, unsigned int cd) :
         code(c), name(n), credit(cd) {}
 
     unsigned int getKey() const {
@@ -71,7 +72,7 @@ public:
     }
     string getCode() const {return code;}
     string getName() const {return name;}
-    Credit getCredit() const {return credit;}
+    unsigned int getCredit() const {return credit;}
 
     bool operator==(Course c) {return !code.compare(c.code);}
     bool operator!=(Course c) {return !((*this) == c);}
@@ -80,7 +81,7 @@ public:
 private:
     string code;
     string name;
-    Credit credit;
+    unsigned int credit;
 };
 
 class RegRecord

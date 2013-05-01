@@ -16,117 +16,45 @@ class DoublyLinkedList
     } *NodePtr;
 
 public:
-    DoublyLinkedList(): _size(0) {
-
-        _end = new Node;
-        _end->prev = 0;
-        _end->next = 0;
-        _head = _end;
-
-    }
+    DoublyLinkedList(): _size(0), _head(0) {}
 
     ~DoublyLinkedList(){
 
         while(_size)
             removeLast();
-        delete _end;
 
     }
 
     bool isEmpty() const {return _size == 0;}
     int size() const {return _size;}
 
-    void addFirst(const T& item) {
-
-        NodePtr temp = new Node;
-        temp->data = item;
-        temp->prev = 0;
-        temp->next = _head;
-        _head->prev = temp;
-        _head = temp;
-        ++_size;
-
-    }
-
-    void addLast(const T& item) {
-
-        NodePtr temp = new Node;
-        temp->data = item;
-        temp->prev = _end->prev;
-        temp->next = _end;
-        if(_size == 0)
-            _head = temp;
-        else _end->prev->next = temp;
-        _end->prev = temp;
-        ++_size;
-
-    }
-
-
-    T removeFirst() {
-        try {
-
-            if(_size == 0)
-                throw -1;
-
-            NodePtr temp = _head;
-            T data = temp->data;
-            _head = _head->next;
-            delete temp;
-            temp = 0;
-            --_size;
-            return data;
-
-        }
-        catch(int) {
-
-            cerr << "Cannot delete element from empty deque" << endl;
-
-        }
-
-    }
-
-    T removeLast() {
-        try {
-
-            if(_size == 0)
-                throw -1;
-
-            NodePtr temp = _end->prev;
-            T data = temp->data;
-            _end->prev = temp->prev;
-            delete temp;
-            temp = 0;
-            --_size;
-            return data;
-
-        }
-        catch(int) {
-
-            cerr << "Cannot delete element from empty deque" << endl;
-
-        }
-    }
-
     bool insert(const T& item)
     {
         NodePtr temp = new Node;
+        if(!temp) return false;
+
         temp->data = item;
 
-        NodePtr ptr = _head;
-        while(ptr != _end->next)
+        if(!_head)
+        {
+            _head = temp;
+            _head->prev = _head;
+            _head->next = _head;
+            ++_size;
+            return true;
+        }
+
+        NodePtr ptr = _head->next;
+
+        while(ptr)
         {
             if(ptr->data == item) return false;
 
-            if( !(ptr->data < item) || ptr == _end)
+            if( ptr->data > item || ptr == _head)
             {
-                if(ptr->prev)
-                    ptr->prev->next = temp;
-                else
-                    _head = temp;
-
                 temp->prev = ptr->prev;
                 temp->next = ptr;
+                ptr->prev->next = temp;
                 ptr->prev = temp;
 
                 ++_size;
@@ -141,42 +69,61 @@ public:
 
     bool remove(const T& item)
     {
-        NodePtr ptr = _head;
-        while(ptr != _end)
+        if(!_head) return false;
+
+        if(_head->data == item)
+        {
+            if(_size == 1)
+            {
+                delete _head;
+                _head = 0;
+            }
+            else
+            {
+                NodePtr temp = _head;
+                _head->prev->next = _head->next;
+                _head->next->prev = _head->prev;
+                _head = _head->next;
+                delete temp;
+            }
+
+            --_size;
+            return true;
+        }
+
+        NodePtr ptr = _head->next;
+        while(ptr != _head)
         {
             if(ptr->data == item)
             {
-                if(ptr == _head)
-                    _head = ptr->next;
-                else
-                    ptr->prev->next = ptr->next;
-
+                ptr->prev->next = ptr->next;
                 ptr->next->prev = ptr->prev;
                 delete ptr;
-
                 --_size;
                 return true;
             }
-
             ptr = ptr->next;
         }
+
         return false;
     }
 
     const T* search(const T& item) const
     {
         NodePtr ptr = _head;
-        while(ptr != _end)
+        while(!ptr)
         {
             if(ptr->data == item)
                 return &(ptr->data);
             ptr = ptr->next;
+
+            if(ptr == _head)
+                break;
         }
         return 0;
     }
 
 private:
     NodePtr _head;
-    NodePtr _end;
     unsigned int _size;
 };

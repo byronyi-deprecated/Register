@@ -1,6 +1,8 @@
 #ifndef MENU_H
 #define MENU_H
 
+#include "Database.h"
+#include "Utils.h"
 #include <vector>
 #include <iostream>
 #include <cstdlib>
