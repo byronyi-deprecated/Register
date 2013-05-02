@@ -11,6 +11,8 @@ template<class T>
 class HashTable
 {
 public:
+    HashTable(unsigned int size) : buckets(DoublyLinkedList<T>(), size) {}
+
     bool insert(const T& item)
     {
         HashVal val = hash(item);
@@ -34,7 +36,7 @@ private:
     {
         return item.getKey() % buckets.size();
     }
-    vector<DoublyLinkedList> buckets;
+    vector<DoublyLinkedList<T> > buckets;
 };
 
 #endif // HASHTABLE_H

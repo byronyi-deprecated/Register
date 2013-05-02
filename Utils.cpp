@@ -2,6 +2,7 @@
 #include "Database.h"
 #include <iostream>
 
+using namespace Database;
 Student* getStudentFromInput()
 {
     cout << "Enter the student ID: ";

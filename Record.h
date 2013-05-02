@@ -17,6 +17,7 @@
 #define MAX_EXAM_MARK 100
 
 #include <string>
+#include <list>
 using namespace std;
 
 class Record
@@ -30,6 +31,8 @@ class Student : public Record
 public:
     Student(string id, string n, unsigned int y, char g) :
         ID(id), name(n), year(y), gender(g) {}
+
+    void addCourse(Course* course) {courses.push_back(course);}
 
     unsigned int getKey() const {
         unsigned int sum = 0;
@@ -54,6 +57,8 @@ private:
     string name;
     unsigned int year;
     char gender;
+
+    list<Course*> courses;
 };
 
 class Course : public Record
@@ -61,6 +66,8 @@ class Course : public Record
 public:
     Course(string c, string n, unsigned int cd) :
         code(c), name(n), credit(cd) {}
+
+    void addStudent(Student* student) {students.push_back(student);}
 
     unsigned int getKey() const {
         unsigned int sum = 0;
@@ -82,21 +89,23 @@ private:
     string code;
     string name;
     unsigned int credit;
+
+    list<Student*> students;
 };
 
-class RegRecord
+class Registration
 {
 public:
-    RegRecord(Student* s, Course* c, unsigned int m) :
+    Registration(Student* s, Course* c, unsigned int m) :
         student(s), course(c), mark(m) {}
 
     string getID() const {return student->getID();}
     string getCode() const {return course->getCode();}
     unsigned int getMark() const {return mark;}
 
-    bool operator==(RegRecord r) {return *student == *(r.student) && *course == *(r.course);}
-    bool operator!=(RegRecord r) {return !((*this) == r);}
-    bool operator<(RegRecord r) {
+    bool operator==(Registration r) {return *student == *(r.student) && *course == *(r.course);}
+    bool operator!=(Registration r) {return !((*this) == r);}
+    bool operator<(Registration r) {
         if(*student < *(r.student)) return true;
         else if(*student == *(r.student) && *course < *(r.course)) return true;
         else return false;

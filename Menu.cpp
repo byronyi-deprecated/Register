@@ -1,4 +1,5 @@
 #include "Menu.h"
+using namespace Database;
 
 MainMenu::MainMenu()
 {
@@ -16,12 +17,12 @@ MainMenu::MainMenu()
     courseMenu->addItem(&queryCourse);
     courseMenu->addItem(this);
 
-    recordMenu = new RecordMenu;
-    recordMenu->addItem(&insertRecord);
-    recordMenu->addItem(&deleteRecord);
-    recordMenu->addItem(&modifyRecord);
-    recordMenu->addItem(&queryRecord);
-    recordMenu->addItem(this);
+    registrationMenu = new RegistrationMenu;
+    registrationMenu->addItem(&insertRegistration);
+    registrationMenu->addItem(&deleteRegistration);
+    registrationMenu->addItem(&modifyRegistration);
+    registrationMenu->addItem(&queryRegistration);
+    registrationMenu->addItem(this);
 
     reportMenu = new ReportMenu;
     reportMenu->addItem(&reportStudent);
@@ -39,7 +40,7 @@ MainMenu::MainMenu()
 
     addItem(studentMenu);
     addItem(courseMenu);
-    addItem(recordMenu);
+    addItem(registrationMenu);
     addItem(reportMenu);
     addItem(fileMenu);
     addItem(&quit);
@@ -140,7 +141,7 @@ void CourseMenu::go()
     }
 }
 
-void RecordMenu::go()
+void RegistrationMenu::go()
 {
     system("cls");
     cout << "HKUST Course Registration System <Registration Menu>" << endl;
@@ -324,7 +325,7 @@ void InsertRecord::go()
         return;
     }
 
-    if(doInsertRecord(RegRecord(student, course, NA_EXAM_MARK)));
+    if(doInsertRecord(Registration(student, course, NA_EXAM_MARK)));
         cout << "Creation of course record successful" << endl << endl;
 
     return;
@@ -368,7 +369,7 @@ void DeleteRecord::go()
         return;
     }
 
-    RegRecord* regRecord = doQueryRecord(student, record);
+    Registration* regRecord = doQueryRecord(student, record);
 
     if(!regRecord)
         cout << "The registration record does not exist" << endl << endl;
@@ -456,7 +457,7 @@ void ModifyRecord::go()
         return;
     }
 
-    RegRecord* regRecord = doQueryRecord(student, record);
+    Registration* regRecord = doQueryRecord(student, record);
 
     if(!regRecord)
         cout << "The registration record does not exist" << endl << endl;
@@ -474,7 +475,7 @@ void ModifyRecord::go()
         while(!parseExamMark(mark))
             cin >> mark;
 
-        *regRecord = RegRecord(student, course, mark);
+        *regRecord = Registration(student, course, mark);
         cout << "Modification of exam mark successful" << endl << endl;
     }
 
@@ -532,7 +533,7 @@ void QueryRecord::go()
         return;
     }
 
-    RegRecord* regRecord = doQueryRecord(student, record);
+    Registration* regRecord = doQueryRecord(student, record);
     if(!regRecord)
     {
         cout << "The registration record does not exist" << endl << endl;
@@ -550,30 +551,50 @@ void QueryRecord::go()
 
 void ReportStudent::go()
 {
-
+    if(Write2HTML_Student())
+        cout << "Output successful" << endl << endl;
 }
 
 void ReportCourse::go()
 {
-
+    if(Write2HTML_Course())
+        cout << "Output successful" << endl << endl;
 }
 
 void ReportCourseByStudent::go()
 {
-
+    Student* student = getStudentFromInput();
+    if(!student)
+        cout << "Student not exist" << endl << endl;
+    else if(Write2HTML_CourseByStudent(student))
+        cout << "Output successful" << endl << endl;
 }
 
 void ReportStudentByCourse::go()
 {
-
+    Course* course = getCourseFromInput();
+    if(!course)
+        cout << "Course not exist" << endl << endl;
+    else if(Write2HTML_StudentByCourse(course))
+        cout << "Output successful" << endl << endl;
 }
 
 void SaveDatabase::go()
 {
-
+    cout << "Enter the filename: ";
+    char* filename;
+    cin >> filename;
+    if(WriteToBinary(string(filename)))
+        cout << "Saving successful" << endl << endl;
 }
 
 void LoadDatabase::go()
 {
-
+    cout << "Enter the filename: ";
+    char* filename;
+    cin >> filename;
+    if(ReadFromBinary(string(filename)))
+        cout << "Loading successful" << endl << endl;
+    else
+        cout << "Error: Load File Error <File not exist / File Corrupted / Incorrect Format>" << endl << endl;
 }

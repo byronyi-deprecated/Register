@@ -37,10 +37,10 @@ static struct CourseMenu : public Menu
     void go();
 } *courseMenu;
 
-static struct RecordMenu : public Menu
+static struct RegistrationMenu : public Menu
 {
     void go();
-} *recordMenu;
+} *registrationMenu;
 
 static struct ReportMenu : public Menu
 {
@@ -67,10 +67,10 @@ static struct InsertCourse : public MenuItem
     void go();
 } insertCourse;
 
-static struct InsertRecord : public MenuItem
+static struct InsertRegistration : public MenuItem
 {
     void go();
-} insertRecord;
+} insertRegistration;
 
 static struct ModifyStudent : public MenuItem
 {
@@ -82,10 +82,10 @@ static struct ModifyCourse : public MenuItem
     void go();
 } modifyCourse;
 
-static struct ModifyRecord : public MenuItem
+static struct ModifyRegistration : public MenuItem
 {
     void go();
-} modifyRecord;
+} modifyRegistration;
 
 static struct DeleteStudent : public MenuItem
 {
@@ -97,10 +97,10 @@ static struct DeleteCourse : public MenuItem
     void go();
 } deleteCourse;
 
-static struct DeleteRecord : public MenuItem
+static struct DeleteRegistration : public MenuItem
 {
     void go();
-} deleteRecord;
+} deleteRegistration;
 
 static struct QueryStudent : public MenuItem
 {
@@ -112,10 +112,10 @@ static struct QueryCourse : public MenuItem
     void go();
 } queryCourse;
 
-static struct QueryRecord : public MenuItem
+static struct QueryRegistration : public MenuItem
 {
     void go();
-} queryRecord;
+} queryRegistration;
 
 static struct ReportStudent : public MenuItem
 {

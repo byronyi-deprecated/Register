@@ -2,34 +2,51 @@
 #define DATABASE_H
 
 #include "Record.h"
+#include "HashTable.h"
+#include "DoublyLinkedList.h"
+
+//==================================================================
+//Although only one db instance is instanitiated for every execution
+//of the program now , all the db manipulation methods are still
+//encapsuled into this class, just in case for possible extension
+//of the program to manipulating several databases simutaneously
+//in the future.
+//
+//If do so, remember to remove all the static declaration!
+//==================================================================
+
 class Database
 {
 public:
-    Database();
 
-    bool doInsertStudent(Student&);
-    bool doInsertCourse(Course&);
-    bool doInsertRecord(RegRecord&);
+    static bool doInsertStudent(Student&);
+    static bool doInsertCourse(Course&);
+    static bool doInsertRegistration(Registration&);
 
-    bool doDeleteStudent(Student*);
-    bool doDeleteCourse(Course*);
-    bool doDeleteRecord(RegRecord*);
+    static bool doDeleteStudent(Student*);
+    static bool doDeleteCourse(Course*);
+    static bool doDeleteRegistration(Registration*);
 
-    Student* doQueryStudent(string);
-    Course* doQueryCourse(string);
-    RegRecord* doQueryRecord(Student*, Course*);
+    static Student* doQueryStudent(string);
+    static Course* doQueryCourse(string);
+    static Registration* doQueryRegistration(Student*, Course*);
 
-    bool doModifyStudent(Student*);
-    bool doModifyCourse(Course*);
-    bool doModifyRecord(RegRecord*);
+    static bool doModifyStudent(Student*);
+    static bool doModifyCourse(Course*);
+    static bool doModifyRegistration(Registration*);
 
-    bool WriteToBinary(string);
-    bool ReadFromBinary(ifstream);
+    static bool WriteToBinary(string);
+    static bool ReadFromBinary(string);
 
-    bool Write2HTML_Student();
-    bool Write2HTML_Course();
-    bool Write2HTML_StudentByCourse(Course&);
-    bool Write2HTML_CourseByStudent(Student&);
+    static bool Write2HTML_Student();
+    static bool Write2HTML_Course();
+    static bool Write2HTML_StudentByCourse(Course*);
+    static bool Write2HTML_CourseByStudent(Student*);
+
+private:
+    static HashTable<Student> studentRecord;
+    static HashTable<Course> courseRecord;
+    static DoublyLinkedList<Registration> regRecord;
 };
 
 #endif // DATABASE_H
