@@ -19,21 +19,21 @@ class Database
 {
 public:
 
-    static bool doInsertStudent(Student&);
-    static bool doInsertCourse(Course&);
-    static bool doInsertRegistration(Registration&);
+    static bool doInsertStudent(const Student&);
+    static bool doInsertCourse(const Course&);
+    static bool doInsertRegistration(const Student&, const Course&);
 
-    static bool doDeleteStudent(Student*);
-    static bool doDeleteCourse(Course*);
-    static bool doDeleteRegistration(Registration*);
+    static bool doDeleteStudent(const Student&);
+    static bool doDeleteCourse(const Course&);
+    static bool doDeleteRegistration(const Student&, const Course&);
 
-    static Student* doQueryStudent(string);
-    static Course* doQueryCourse(string);
-    static Registration* doQueryRegistration(Student*, Course*);
+    static bool doQueryStudent(const Student&);
+    static bool doQueryCourse(const Course&);
+    static bool doQueryRegistration(const Student&, const Course&);
 
-    static bool doModifyStudent(Student*);
-    static bool doModifyCourse(Course*);
-    static bool doModifyRegistration(Registration*);
+    static bool doModifyStudent(const Student&);
+    static bool doModifyCourse(const Course&);
+    static bool doModifyRegistration(const Student&, const Course&);
 
     static bool WriteToBinary(string);
     static bool ReadFromBinary(string);
@@ -46,6 +46,8 @@ public:
 private:
     static HashTable<Student> studentRecord;
     static HashTable<Course> courseRecord;
+    static HashTable<StudentIdx> studentIndex;
+    static HashTable<CourseIdx> courseIndex;
     static DoublyLinkedList<Registration> regRecord;
 };
 

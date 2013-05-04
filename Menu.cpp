@@ -309,7 +309,7 @@ void InsertCourse::go()
     return;
 }
 
-void InsertRecord::go()
+void InsertRegistration::go()
 {
     Student* student = getStudentFromInput();
     if(!student)
@@ -325,7 +325,7 @@ void InsertRecord::go()
         return;
     }
 
-    if(doInsertRecord(Registration(student, course, NA_EXAM_MARK)));
+    if(doInsertRegistration(Registration(student, course)));
         cout << "Creation of course record successful" << endl << endl;
 
     return;
@@ -353,7 +353,7 @@ void DeleteCourse::go()
     return;
 }
 
-void DeleteRecord::go()
+void DeleteRegistration::go()
 {
     Student* student = getStudentFromInput();
     if(!student)
@@ -369,11 +369,11 @@ void DeleteRecord::go()
         return;
     }
 
-    Registration* regRecord = doQueryRecord(student, record);
+    Registration* regRecord = doQueryRegistration(Registration(student, record));
 
     if(!regRecord)
         cout << "The registration record does not exist" << endl << endl;
-    else if(doDeleteRecord(regRecord))
+    else if(doDeleteRegistration(regRecord))
         cout << "Drop course successful" << endl << endl;
 
     return;
@@ -442,7 +442,7 @@ void ModifyCourse::go()
     return;
 }
 
-void ModifyRecord::go()
+void ModifyRegistration::go()
 {
     Student* student = getStudentFromInput();
     if(!student)
@@ -457,7 +457,7 @@ void ModifyRecord::go()
         return;
     }
 
-    Registration* regRecord = doQueryRecord(student, record);
+    Registration* regRecord = doQueryRegistration(Registration(student, record));
 
     if(!regRecord)
         cout << "The registration record does not exist" << endl << endl;
@@ -475,7 +475,7 @@ void ModifyRecord::go()
         while(!parseExamMark(mark))
             cin >> mark;
 
-        *regRecord = Registration(student, course, mark);
+        regRecord->setMark(mark);
         cout << "Modification of exam mark successful" << endl << endl;
     }
 
@@ -517,7 +517,7 @@ void QueryCourse::go()
     return;
 }
 
-void QueryRecord::go()
+void QueryRegistration::go()
 {
     Student* student = getStudentFromInput();
     if(!student)
@@ -533,7 +533,7 @@ void QueryRecord::go()
         return;
     }
 
-    Registration* regRecord = doQueryRecord(student, record);
+    Registration* regRecord = doQueryRegistration(Registration(student, record));
     if(!regRecord)
     {
         cout << "The registration record does not exist" << endl << endl;

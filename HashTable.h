@@ -25,7 +25,7 @@ public:
         return buckets[val].remove(item);
     }
 
-    bool search(const T& item)
+    const T* search(const T& item)
     {
         HashVal val = hash(item);
         return buckets[val].search(item);

@@ -3,7 +3,7 @@
 #include <iostream>
 
 using namespace Database;
-Student* getStudentFromInput()
+Student getStudentFromInput() const
 {
     cout << "Enter the student ID: ";
     string ID;
@@ -14,7 +14,7 @@ Student* getStudentFromInput()
     return doQueryStudent(ID);
 }
 
-Course* getCourseFromInput()
+Course getCourseFromInput() const
 {
     cout << "Enter the course code: ";
     string code;

@@ -4,8 +4,8 @@
 #include "Record.h"
 using namespace std;
 
-Student* getStudentFromInput();
-Course* getCourseFromInput();
+Student getStudentFromInput() const;
+Course getCourseFromInput() const;
 
 bool parseStuID(const string&);
 bool parseStuName(const string&);
