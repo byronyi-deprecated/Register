@@ -20,10 +20,20 @@
 #include <list>
 using namespace std;
 
+size_t hash(string key) const
+{
+    unsigned int sum = 0;
+    for(unsigned int i = 0; i != key.length(); ++i)
+    {
+        sum += (key.c_str())[i];
+    }
+    return sum;
+}
+
 class Record
 {
 public:
-    virtual unsigned int getKey() const = 0;
+    virtual size_t getKey() const = 0;
 };
 
 class Student : public Record
@@ -32,16 +42,7 @@ public:
     Student(string id, string n = string(), unsigned int y = 0, char g = 0) :
         ID(id), name(n), year(y), gender(g) {}
 
-    void addCourse(Course* course) {courses.push_back(course);}
-
-    unsigned int getKey() const {
-        unsigned int sum = 0;
-        for(unsigned int i = 0; i != ID.length(); ++i)
-        {
-            sum += (ID.c_str())[i];
-        }
-        return sum;
-    }
+    size_t getKey() const {return hash(ID);}
 
     string getID() const {return ID;}
     string getName() const {return name;}
@@ -53,7 +54,9 @@ public:
     void setGender(char g) {gender = g;}
 
     bool operator==(Student s) {return ID.compare(s.ID) == 0;}
+    bool operator==(string student_id) {return ID.compare(student_id) == 0;}
     bool operator!=(Student s) {return !((*this) == s);}
+    bool operator!=(string student_id) {return !((*this) == student_id);}
     bool operator<(Student s) {return ID.compare(s.ID) == -1;}
 
 private:
@@ -69,16 +72,7 @@ public:
     Course(string c, string n = string(), unsigned int cd = 0) :
         code(c), name(n), credit(cd) {}
 
-    void addStudent(Student* student) {students.push_back(student);}
-
-    unsigned int getKey() const {
-        unsigned int sum = 0;
-        for(unsigned int i = 0; i != code.length(); ++i)
-        {
-            sum += (code.c_str())[i];
-        }
-        return sum;
-    }
+    size_t getKey() const {return hash(code);}
     string getCode() const {return code;}
     string getName() const {return name;}
     unsigned int getCredit() const {return credit;}
@@ -88,7 +82,9 @@ public:
     void setCredit(unsigned int c) {credit = c;}
 
     bool operator==(Course c) {return code.compare(c.code) == 0;}
+    bool operator==(string course_code) {return code.compare(course_code) == 0;}
     bool operator!=(Course c) {return !((*this) == c);}
+    bool operator!=(string course_code) {return !((*this) == course_code);}
     bool operator<(Course c) {return code.compare(c.code) == -1;}
 
 private:
@@ -101,7 +97,7 @@ class Registration
 {
 public:
     Registration(string id, string c, unsigned int m  = NA_EXAM_MARK) :
-        ID(s), code(c), mark(m) {}
+        ID(id), code(c), mark(m) {}
 
     string getID() const {return ID;}
     string getCode() const {return code;}
@@ -127,26 +123,48 @@ struct StudentIdx
 {
     StudentIdx(string id, Registration* r = 0) : ID(id), reg(r) {}
     string ID;
-    Registration* reg;
+    struct RegistrationPtr {
+        Registration* r;
 
-    unsigned int getKey() const {return student->getKey();}
+        RegistrationPtr(Registration* _r) : r(_r) {}
+        bool operator==(RegistrationPtr ptr) {return r == ptr.r;}
+        unsigned int getKey() const {return key_id(r->getID());}
+    } reg;
 
-    bool operator==(StudentIdx idx) {return student == idx.student;}
+    size_t getKey() const {return hash(ID);}
+
+    bool operator==(StudentIdx idx) {return *this == idx.ID && *this == idx.reg;}
+    bool operator==(string student_id) {return ID.compare(student_id) == 0;}
+    bool operator==(RegistrationPtr r) {return r == reg;}
     bool operator!=(StudentIdx idx) {return !((*this) == idx);}
-    bool operator<(StudentIdx idx) {return *student < *(idx.student);}
+    bool operator!=(string student_id) {return !((*this) == student_id);}
+    bool operator!=(RegistrationPtr r) {return !((*this) == r);}
+
+    bool operator<(StudentIdx idx) {return ID.compare(idx.ID) == -1;}
 };
 
 struct CourseIdx
 {
     CourseIdx(string c, Registration* r = 0) : code(c), reg(r) {}
     string code;
-    Registration* reg;
+    struct RegistrationPtr {
+        Registration* r;
 
-    unsigned int getKey() const {return course->getKey();}
+        RegistrationPtr(Registration* _r) : r(_r) {}
+        bool operator==(RegistrationPtr ptr) {return r == ptr.r;}
+        unsigned int getKey() const {return key_code(r->getCode());}
+    } reg;
 
-    bool operator==(CourseIdx idx) {return code == idx.code;}
+    size_t getKey() const {return hash(code);}
+
+    bool operator==(CourseIdx idx) {return *this == idx.code && *this == idx.reg;}
+    bool operator==(string course_code) {return code.compare(course_code) == 0;}
+    bool operator==(RegistrationPtr r) {return r == reg;}
     bool operator!=(CourseIdx idx) {return !((*this) == idx);}
-    bool operator<(CourseIdx idx) {return *course < *(idx.course);}
+    bool operator!=(string course_code) {return !((*this) == course_code);}
+    bool operator!=(RegistrationPtr r) {return !((*this) == r);}
+
+    bool operator<(CourseIdx idx) {return code.compare(idx.code) == -1;}
 };
 
 #endif // RECORD_H
