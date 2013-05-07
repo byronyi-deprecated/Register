@@ -2,8 +2,7 @@
 #include "Database.h"
 #include <iostream>
 
-using namespace Database;
-string getStuIDFromInput() const
+string getStuIDFromInput()
 {
     cout << "Enter the student ID: ";
     string ID;
@@ -14,7 +13,7 @@ string getStuIDFromInput() const
     return ID;
 }
 
-string getCodeFromInput() const
+string getCodeFromInput()
 {
     cout << "Enter the course code: ";
     string code;
@@ -25,7 +24,7 @@ string getCodeFromInput() const
     return code;
 }
 
-string getStuNameFromInput(string _name) const
+string getStuNameFromInput(string _name)
 {
     cout << "Enter the student name ";
 
@@ -41,7 +40,7 @@ string getStuNameFromInput(string _name) const
     return name;
 }
 
-unsigned int getStuYearFromInput(unsigned _year) const
+unsigned int getStuYearFromInput(unsigned _year)
 {
     cout << "Enter the student year ";
 
@@ -58,7 +57,7 @@ unsigned int getStuYearFromInput(unsigned _year) const
     return year;
 }
 
-char getStuGenderFromInput(char _gender) const
+char getStuGenderFromInput(char _gender)
 {
     cout << "Enter the student gender ";
     if(_gender == '\0')
@@ -77,7 +76,7 @@ char getStuGenderFromInput(char _gender) const
     return gender;
 }
 
-string getCourseNameFromInput(string _name = string()) const
+string getCourseNameFromInput(string _name)
 {
     cout << "Enter the course name ";
 
@@ -93,14 +92,14 @@ string getCourseNameFromInput(string _name = string()) const
     return name;
 }
 
-unsigned int getCourseCreditFromInput(unsigned int credit = 99) const
+unsigned int getCourseCreditFromInput(unsigned int _credit)
 {
     cout << "Enter the course credit ";
 
-    if(_year == 99)
+    if(_credit == 99)
         cout << "[0-5]: ";
     else
-        cout << "[" << credit << "]: ";
+        cout << "[" << _credit << "]: ";
 
     unsigned int credit;
     cin >> credit;
@@ -110,10 +109,10 @@ unsigned int getCourseCreditFromInput(unsigned int credit = 99) const
     return credit;
 }
 
-unsigned int getExamMarkFromInput(unsigned int _mark = NA_EXAM_MARK) const
+unsigned int getExamMarkFromInput(unsigned int _mark)
 {
     cout << "Enter the exam mark [";
-    if(regRecord->getMark() == NA_EXAM_MARK)
+    if( _mark == NA_EXAM_MARK)
         cout << "N/A";
     else
         cout << _mark;
@@ -123,9 +122,6 @@ unsigned int getExamMarkFromInput(unsigned int _mark = NA_EXAM_MARK) const
     cin >> mark;
     while(!parseExamMark(mark))
         cin >> mark;
-
-    regRecord->setMark(mark);
-    cout << "Modification of exam mark successful" << endl << endl;
 
     return mark;
 }

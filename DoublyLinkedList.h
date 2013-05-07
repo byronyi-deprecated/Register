@@ -1,11 +1,7 @@
 #ifndef DOUBLYLINKEDLIST_H
 #define DOUBLYLINKEDLIST_H
 
-#endif // DOUBLYLINKEDLIST_H
-#include <iostream>
-using namespace std;
-
-template <class T>
+template <typename T>
 class DoublyLinkedList
 {
     typedef struct Node
@@ -21,7 +17,7 @@ public:
     ~DoublyLinkedList(){
 
         while(_size)
-            removeLast();
+            remove(_head->data);
 
     }
 
@@ -30,14 +26,10 @@ public:
 
     bool insert(const T& item)
     {
-        NodePtr temp = new Node;
-        if(!temp) return false;
-
-        temp->data = item;
-
         if(!_head)
         {
-            _head = temp;
+            _head = new Node;
+            _head->data = item;
             _head->prev = _head;
             _head->next = _head;
             ++_size;
@@ -50,8 +42,10 @@ public:
         {
             if(ptr->data == item) return false;
 
-            if( ptr->data > item || ptr == _head)
-            {
+            if( !(ptr->data < item) || ptr == _head)
+            {                
+                NodePtr temp = new Node;
+                temp->data = item;
                 temp->prev = ptr->prev;
                 temp->next = ptr;
                 ptr->prev->next = temp;
@@ -127,3 +121,5 @@ private:
     NodePtr _head;
     unsigned int _size;
 };
+
+#endif // DOUBLYLINKEDLIST_H

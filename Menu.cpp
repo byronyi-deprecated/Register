@@ -1,8 +1,9 @@
 #include "Menu.h"
-using namespace Database;
 
 MainMenu::MainMenu()
 {
+    db = new Database;
+
     studentMenu = new StudentMenu;
     studentMenu->addItem(&insertStudent);
     studentMenu->addItem(&modifyStudent);
@@ -245,7 +246,7 @@ void InsertStudent::go()
 {
     string ID = getStuIDFromInput();
 
-    if(!doInsertStudent(Student(ID)))
+    if(!db->doInsertStudent(Student(ID)))
     {
         cout << "Student already exist" << endl << endl;
         return;
@@ -255,10 +256,10 @@ void InsertStudent::go()
     unsigned int year = getStuYearFromInput();
     char gender = getStuGenderFromInput();
 
-    if(doModifyStudent(ID, name, year, gender))
+    if(db->doModifyStudent(ID, name, year, gender))
         cout << "Creation of student record successful" << endl << endl;
     else
-        doDeleteStudent(ID);
+        db->doDeleteStudent(ID);
 
     return;
 }
@@ -266,7 +267,7 @@ void InsertStudent::go()
 void InsertCourse::go()
 {
     string code = getCodeFromInput();
-    if(!doInsertCourse(Course(code)))
+    if(!db->doInsertCourse(Course(code)))
     {
         cout << "Course already exist" << endl << endl;
         return;
@@ -275,10 +276,10 @@ void InsertCourse::go()
     string name = getCourseNameFromInput();
     unsigned int credit = getCourseCreditFromInput();
 
-    if(doModifyCourse(code, name, credit))
+    if(db->doModifyCourse(code, name, credit))
         cout << "Creation of course record successful" << endl << endl;
     else
-        doDeleteCourse(code);
+        db->doDeleteCourse(code);
 
     return;
 }
@@ -286,12 +287,12 @@ void InsertCourse::go()
 void InsertRegistration::go()
 {
     string ID = getStuIDFromInput();
-    doQueryStudent(ID);
+    db->doQueryStudent(ID);
 
     string code = getCodeFromInput();
-    doQueryCourse(code);
+    db->doQueryCourse(code);
 
-    if(doInsertRegistration(Registration(ID, code)))
+    if(db->doInsertRegistration(Registration(ID, code)))
         cout << "Creation of course record successful" << endl << endl;
     else
         cout << "The registration already exists" << endl << endl;
@@ -301,9 +302,9 @@ void InsertRegistration::go()
 void DeleteStudent::go()
 {
     string ID = getStuIDFromInput();
-    doQueryStudent(ID);
+    db->doQueryStudent(ID);
 
-    if(doDeleteStudent(ID))
+    if(db->doDeleteStudent(ID))
         cout << "Deletion of student record successful" << endl << endl;
 
     return;
@@ -311,10 +312,10 @@ void DeleteStudent::go()
 
 void DeleteCourse::go()
 {
-    Course course = getCourseFromInput();
-    doQueryCourse(code);
+    string code = getCodeFromInput();
+    db->doQueryCourse(code);
 
-    if(doDeleteCourse(code))
+    if(db->doDeleteCourse(code))
         cout << "Deletion of course record successful" << endl << endl;
 
     return;
@@ -323,12 +324,12 @@ void DeleteCourse::go()
 void DeleteRegistration::go()
 {
     string ID = getStuIDFromInput();
-    doQueryStudent(ID);
+    db->doQueryStudent(ID);
 
     string code = getCodeFromInput();
-    doQueryCourse(code);
+    db->doQueryCourse(code);
 
-    if(doDeleteRegistration(ID, code))
+    if(db->doDeleteRegistration(ID, code))
         cout << "Drop course successful" << endl << endl;
 
     return;
@@ -337,13 +338,13 @@ void DeleteRegistration::go()
 void ModifyStudent::go()
 {
     string ID = getStuIDFromInput();
-    Student student = doQueryStudent(ID);
+    Student student = db->doQueryStudent(ID);
 
     string name = getStuNameFromInput(student.getName());
     unsigned int year = getStuYearFromInput(student.getYear());
     char gender = getStuGenderFromInput(student.getGender());
 
-    if(doModifyStudent(ID, name, year, gender))
+    if(db->doModifyStudent(ID, name, year, gender))
         cout << "Modification of student record successful" << endl << endl;
 
     return;
@@ -352,12 +353,12 @@ void ModifyStudent::go()
 void ModifyCourse::go()
 {
     string code = getCodeFromInput();
-    Course course = doQueryCourse(code);
+    Course course = db->doQueryCourse(code);
 
     string name = getCourseNameFromInput(course.getName());
     unsigned int credit = getCourseCreditFromInput(course.getCredit());
 
-    if(doModifyCourse(code, name, credit))
+    if(db->doModifyCourse(code, name, credit))
         cout << "Modification of course record successful" << endl << endl;
 
     return;
@@ -366,16 +367,16 @@ void ModifyCourse::go()
 void ModifyRegistration::go()
 {
     string ID = getStuIDFromInput();
-    doQueryStudent(ID);
+    db->doQueryStudent(ID);
 
     string code = getCodeFromInput();
-    doQueryCourse(code);
+    db->doQueryCourse(code);
 
-    Registration regRecord = doQueryRegistration(ID, code);
+    Registration regRecord = db->doQueryRegistration(ID, code);
 
     unsigned int mark = getExamMarkFromInput(regRecord.getMark());
 
-    if(doModifyRegistration(ID, code, mark))
+    if(db->doModifyRegistration(ID, code, mark))
         cout << "Modification of exam mark successful" << endl << endl;
 
     return;
@@ -384,7 +385,7 @@ void ModifyRegistration::go()
 void QueryStudent::go()
 {
     string ID = getStuIDFromInput();
-    Student student = doQueryStudent(ID);
+    Student student = db->doQueryStudent(ID);
 
     cout << endl;
     cout << "ID:     " << student.getID() << endl;
@@ -398,7 +399,7 @@ void QueryStudent::go()
 void QueryCourse::go()
 {
     string code = getCodeFromInput();
-    Course course = doQueryCourse(code);
+    Course course = db->doQueryCourse(code);
 
     cout << endl;
     cout << "Code:   " << course.getCode() << endl;
@@ -411,12 +412,12 @@ void QueryCourse::go()
 void QueryRegistration::go()
 {
     string ID = getStuIDFromInput();
-    doQueryStudent(ID);
+    db->doQueryStudent(ID);
 
     string code = getCodeFromInput();
-    doQueryCourse(code);
+    db->doQueryCourse(code);
 
-    Registration regRecord = doQueryRegistration(ID, code);
+    Registration regRecord = db->doQueryRegistration(ID, code);
 
     cout << endl;
     cout << "Student ID:  " << regRecord.getID() << endl;
@@ -429,30 +430,29 @@ void QueryRegistration::go()
 
 void ReportStudent::go()
 {
-    if(Write2HTML_Student())
+    if(db->Write2HTML_Student())
         cout << "Output successful" << endl << endl;
 }
 
 void ReportCourse::go()
 {
-    if(Write2HTML_Course())
+    if(db->Write2HTML_Course())
         cout << "Output successful" << endl << endl;
 }
 
 void ReportCourseByStudent::go()
 {
     string ID = getStuIDFromInput();
-    Student student = doQueryStudent(ID);
-    else if(Write2HTML_CourseByStudent(student))
+    Student student = db->doQueryStudent(ID);
+    if(db->Write2HTML_CourseByStudent(student))
         cout << "Output successful" << endl << endl;
 }
 
 void ReportStudentByCourse::go()
 {
-    Course* course = getCourseFromInput();
-    if(!course)
-        cout << "Course not exist" << endl << endl;
-    else if(Write2HTML_StudentByCourse(course))
+    string code = getCodeFromInput();
+    Course course = db->doQueryCourse(code);
+    if(db->Write2HTML_StudentByCourse(course))
         cout << "Output successful" << endl << endl;
 }
 
@@ -461,7 +461,7 @@ void SaveDatabase::go()
     cout << "Enter the filename: ";
     char* filename;
     cin >> filename;
-    if(WriteToBinary(string(filename)))
+    if(db->WriteToBinary(string(filename)))
         cout << "Saving successful" << endl << endl;
 }
 
@@ -470,7 +470,7 @@ void LoadDatabase::go()
     cout << "Enter the filename: ";
     char* filename;
     cin >> filename;
-    if(ReadFromBinary(string(filename)))
+    if(db->ReadFromBinary(string(filename)))
         cout << "Loading successful" << endl << endl;
     else
         cout << "Error: Load File Error <File not exist / File Corrupted / Incorrect Format>" << endl << endl;

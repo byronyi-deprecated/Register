@@ -6,11 +6,14 @@
 #include <vector>
 #include <iostream>
 #include <cstdlib>
+#include <string>
 using namespace std;
 
 struct MenuItem
 {
     virtual void go() = 0;
+protected:
+    Database* db;
 };
 
 struct Menu : public MenuItem
@@ -24,7 +27,10 @@ protected:
 struct MainMenu : public Menu
 {
     MainMenu();
+    ~MainMenu() {delete db;}
     void go();
+private:
+    Database* db;
 };
 
 static struct StudentMenu : public Menu
