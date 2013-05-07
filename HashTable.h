@@ -7,36 +7,36 @@ using namespace std;
 
 typedef unsigned int HashVal;
 
-template<class T1, class T2>
+template<class T>
 class HashTable
 {
 public:
     HashTable(unsigned int size) : buckets(DoublyLinkedList<T>(), size) {}
 
-    bool insert(const T1& item)
+    bool insert(const T& item)
     {
         HashVal val = hash(item);
         return buckets[val].insert(item);
     }
 
-    bool remove(const T2& item)
+    bool remove(const T& item)
     {
         HashVal val = hash(item);
         return buckets[val].remove(item);
     }
 
-    const T1* search(const T2& item)
+    T* search(const T& item) const
     {
         HashVal val = hash(item);
         return buckets[val].search(item);
     }
 
 private:
-    HashVal hash(const T1& item) const
+    HashVal hash(const T& item) const
     {
         return item.getKey() % buckets.size();
     }
-    vector<DoublyLinkedList<T1, T2> > buckets;
+    vector<DoublyLinkedList<T> > buckets;
 };
 
 #endif // HASHTABLE_H
