@@ -10,43 +10,47 @@ bool Database::doInsertCourse(const Course& course)
     return courseRecord.insert(course);
 }
 
-bool Database::doInsertRegistration(const Registration& regRecord)
+bool Database::doInsertRegistration(const Registration& reg)
 {
-    Student* student_ptr = studentRecord.search(student);
-    Course* course_ptr = courseRecord.search(course);
-
-    Registration reg(student_ptr, course_ptr);
-
-    bool ok = regRecord.insert(reg);
+    if(!regRecord.insert(reg))
+        return false;
 
     Registration* reg_ptr = regRecord.search(reg);
 
-    studentIndex.insert(StudentIdx(student_ptr, reg_ptr));
-    courseIndex.insert(CourseIdx(course_ptr, reg_ptr));
+    StudentIdx* stu_idx_ptr = studentIndex.search(StudentIdx(reg.getID()));
+    if(!stu_idx_ptr)
+    {
+        studentIndex.insert(StudentIdx(reg.getID()));
+        stu_idx_ptr = studentIndex.search(StudentIdx(reg.getID()));
+    }
 
-    return ok;
+    stu_idx_ptr->addReg(reg_ptr);
+
+    CourseIdx* course_idx_ptr = courseIndex.search(CourseIdx(reg.getCode()));
+    if(!course_idx_ptr)
+    {
+        courseIndex.insert(CourseIdx(reg.getCode()));
+        stu_idx_ptr = courseIndex.search(CourseIdx(reg.getCode()));
+    }
+
+    course_idx_ptr->addReg(reg_ptr);
+
+    return true;
 }
 
 
 bool Database::doDeleteStudent(const string& stuID)
 {
-    Student* student_ptr = studentRecord.search(student);
+    bool ok = studentRecord.remove(Student(stuID));
 
-    if(!student_ptr) return false;
+    StudentIdx* idx_ptr = studentIndex.search(StudentIdx(stuID));
 
-    StudentIdx idx(student_ptr);
+    if(!idx_ptr)
+        return ok;
+    else
+        idx_ptr->reg.clear();
 
-    StudentIdx* idxPtr = studentIndex.search(idx);
-
-    while(idxPtr)
-    {
-        regRecord.remove(*(idxPtr->reg));
-        studentIndex.remove(idx);
-
-        idxPtr = studentIndex.search(idx);
-    }
-
-    return true;
+    return ;
 }
 
 bool Database::doDeleteCourse(const string& code)
