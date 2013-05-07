@@ -100,6 +100,7 @@ void StudentMenu::go()
     }
 
     subItem[choice - 1]->go();
+
     if(choice != 5)
     {
         cout << "Hit a key to continue..." << endl;
@@ -132,6 +133,7 @@ void CourseMenu::go()
     }
 
     subItem[choice - 1]->go();
+
     if(choice != 5)
     {
         cout << "Hit a key to continue..." << endl;
@@ -164,6 +166,7 @@ void RegistrationMenu::go()
     }
 
     subItem[choice - 1]->go();
+
     if(choice != 5)
     {
         cout << "Hit a key to continue..." << endl;
@@ -196,7 +199,9 @@ void ReportMenu::go()
         cin >> choice;
     }
 
-    subItem[choice - 1]->go();
+    try {subItem[choice - 1]->go();}
+    catch(string err) {cout << err << endl << endl;}
+
     if(choice != 5)
     {
         cout << "Hit a key to continue..." << endl;
@@ -238,105 +243,67 @@ void FileMenu::go()
 
 void InsertStudent::go()
 {
-    cout << "Enter the student ID: ";
-    string ID;
-    cin >> ID;
-    while(!parseStuID(ID))
-        cin >> ID;
+    string ID = getStuIDFromInput();
 
-    if(doQueryStudent(ID))
+    if(!doInsertStudent(Student(ID)))
     {
         cout << "Student already exist" << endl << endl;
         return;
     }
 
-    cout << "Enter the student name: ";
-    string name;
-    cin >> name;
-    while(!parseStuName(name))
-        cin >> name;
+    string name = getStuNameFromInput();
+    unsigned int year = getStuYearFromInput();
+    char gender = getStuGenderFromInput();
 
-    cout << "Enter the student year [1-3]: ";
-    unsigned  year;
-    cin >> year;
-    while(!parseStuYear(year))
-        cin >> year;
-
-    cout << "Enter the student gender [M,F]: ";
-    char gender;
-    cin >> gender;
-    while(!parseStuGender(gender))
-        cin >> gender;
-
-    gender = (gender == 'm')? 'M' : gender;
-    gender = (gender == 'f')? 'F' : gender;
-
-    if(doInsertStudent(Student(ID, name, year, gender)))
+    if(doModifyStudent(ID, name, year, gender))
         cout << "Creation of student record successful" << endl << endl;
+    else
+        doDeleteStudent(ID);
 
     return;
 }
 
 void InsertCourse::go()
 {
-    cout << "Enter the course code: ";
-    string code;
-    cin >> code;
-    while(!parseCourseCode(code))
-        cin >> code;
-
-    if(doQueryCourse(code))
+    string code = getCodeFromInput();
+    if(!doInsertCourse(Course(code)))
     {
         cout << "Course already exist" << endl << endl;
         return;
     }
 
-    cout << "Enter the course name: ";
-    string name;
-    cin >> name;
-    while(!parseCourseName(name))
-        cin >> name;
+    string name = getCourseNameFromInput();
+    unsigned int credit = getCourseCreditFromInput();
 
-    cout << "Enter the course credit [0-5]: ";
-    unsigned int credit;
-    cin >> credit;
-    while(!parseCourseCredit(credit))
-        cin >> credit;
-
-    if(doInsertCourse(Course(code, name, credit)))
+    if(doModifyCourse(code, name, credit))
         cout << "Creation of course record successful" << endl << endl;
+    else
+        doDeleteCourse(code);
 
     return;
 }
 
 void InsertRegistration::go()
 {
-    Student* student = getStudentFromInput();
-    if(!student)
-    {
-        cout << "Student does not exist" << endl << endl;
-        return;
-    }
+    string ID = getStuIDFromInput();
+    doQueryStudent(ID);
 
-    Course* course = getCourseFromInput();
-    if(!course)
-    {
-        cout << "Course does not exist" << endl << endl;
-        return;
-    }
+    string code = getCodeFromInput();
+    doQueryCourse(code);
 
-    if(doInsertRegistration(Registration(student, course)));
+    if(doInsertRegistration(Registration(ID, code)))
         cout << "Creation of course record successful" << endl << endl;
-
+    else
+        cout << "The registration already exists" << endl << endl;
     return;
 }
 
 void DeleteStudent::go()
 {
-    Student* student = getStudentFromInput();
-    if(!student)
-        cout << "Student does not exist" << endl << endl;
-    else if(doDeleteStudent(student))
+    string ID = getStuIDFromInput();
+    doQueryStudent(ID);
+
+    if(doDeleteStudent(ID))
         cout << "Deletion of student record successful" << endl << endl;
 
     return;
@@ -344,10 +311,10 @@ void DeleteStudent::go()
 
 void DeleteCourse::go()
 {
-    Course* course = getCourseFromInput();
-    if(!course)
-        cout << "Course does not exist" << endl << endl;
-    else if(doDeleteCourse(course))
+    Course course = getCourseFromInput();
+    doQueryCourse(code);
+
+    if(doDeleteCourse(code))
         cout << "Deletion of course record successful" << endl << endl;
 
     return;
@@ -355,25 +322,13 @@ void DeleteCourse::go()
 
 void DeleteRegistration::go()
 {
-    Student* student = getStudentFromInput();
-    if(!student)
-    {
-        cout << "Student does not exist" << endl << endl;
-        return;
-    }
+    string ID = getStuIDFromInput();
+    doQueryStudent(ID);
 
-    Course* course = getCourseFromInput();
-    if(!course)
-    {
-        cout << "Course does not exist" << endl << endl;
-        return;
-    }
+    string code = getCodeFromInput();
+    doQueryCourse(code);
 
-    Registration* regRecord = doQueryRegistration(Registration(student, record));
-
-    if(!regRecord)
-        cout << "The registration record does not exist" << endl << endl;
-    else if(doDeleteRegistration(regRecord))
+    if(doDeleteRegistration(ID, code))
         cout << "Drop course successful" << endl << endl;
 
     return;
@@ -381,169 +336,92 @@ void DeleteRegistration::go()
 
 void ModifyStudent::go()
 {
-    Student* student = getStudentFromInput();
-    if(!student)
-    {
-        cout << "Student does not exist" << endl << endl;
-        return;
-    }
+    string ID = getStuIDFromInput();
+    Student student = doQueryStudent(ID);
 
-    cout << "Enter the student name [" << student->getName() << "]: ";
-    string name;
-    cin >> name;
-    while(!parseStuName(name))
-        cin >> name;
+    string name = getStuNameFromInput(student.getName());
+    unsigned int year = getStuYearFromInput(student.getYear());
+    char gender = getStuGenderFromInput(student.getGender());
 
-    cout << "Enter the student year [" << student->getYear() << "]: ";
-    int year;
-    cin >> year;
-    while(!parseStuYear(year))
-        cin >> year;
-
-    cout << "Enter the student gender [" << student->getGender() << "]: ";
-    char gender;
-    cin >> gender;
-    while(!parseStuGender(gender))
-        cin >> gender;
-
-    gender = (gender == 'm')? 'M' : gender;
-    gender = (gender == 'f')? 'F' : gender;
-
-    *student = Student(ID, name, year, gender);
-    cout << "Modification of student record successful" << endl << endl;
+    if(doModifyStudent(ID, name, year, gender))
+        cout << "Modification of student record successful" << endl << endl;
 
     return;
 }
 
 void ModifyCourse::go()
 {
-    Course* course = getCourseFromInput();
-    if(!course)
-    {
-        cout << "Course does not exist" << endl << endl;
-        return;
-    }
+    string code = getCodeFromInput();
+    Course course = doQueryCourse(code);
 
-    cout << "Enter the course name [" << course->getName() << "]: ";
-    string name;
-    cin >> name;
-    while(!parseCourseName(name))
-        cin >> name;
+    string name = getCourseNameFromInput(course.getName());
+    unsigned int credit = getCourseCreditFromInput(course.getCredit());
 
-    cout << "Enter the course credit [" << course->getCredit() << "]: ";
-    unsigned int credit;
-    cin >> credit;
-    while(!parseCourseCredit(credit))
-        cin >> credit;
-
-    *course = Course(ID, name, year, gender);
-    cout << "Modification of course record successful" << endl << endl;
+    if(doModifyCourse(code, name, credit))
+        cout << "Modification of course record successful" << endl << endl;
 
     return;
 }
 
 void ModifyRegistration::go()
 {
-    Student* student = getStudentFromInput();
-    if(!student)
-    {
-        cout << "Student does not exist" << endl << endl;
-        return;
-    }
-    Course* course = getCourseFromInput();
-    if(!course)
-    {
-        cout << "Course does not exist" << endl << endl;
-        return;
-    }
+    string ID = getStuIDFromInput();
+    doQueryStudent(ID);
 
-    Registration* regRecord = doQueryRegistration(Registration(student, record));
+    string code = getCodeFromInput();
+    doQueryCourse(code);
 
-    if(!regRecord)
-        cout << "The registration record does not exist" << endl << endl;
-    else
-    {
-        cout << "Enter the exam mark [";
-        if(regRecord->getMark() == NA_EXAM_MARK)
-            cout << "N/A";
-        else
-            cout << regRecord->getMark();
-        cout << "]: ";
+    Registration regRecord = doQueryRegistration(ID, code);
 
-        unsigned int mark;
-        cin >> mark;
-        while(!parseExamMark(mark))
-            cin >> mark;
+    unsigned int mark = getExamMarkFromInput(regRecord.getMark());
 
-        regRecord->setMark(mark);
+    if(doModifyRegistration(ID, code, mark))
         cout << "Modification of exam mark successful" << endl << endl;
-    }
 
     return;
 }
 
 void QueryStudent::go()
 {
-    Student* student = getStudentFromInput();
-    if(!student)
-    {
-        cout << "Student does not exist" << endl << endl;
-        return;
-    }
+    string ID = getStuIDFromInput();
+    Student student = doQueryStudent(ID);
 
     cout << endl;
-    cout << "ID:     " << student->getID() << endl;
-    cout << "Name:   " << student->getName() << endl;
-    cout << "Year:   " << student->getYear() << endl;
-    cout << "Gender: " << student->getGender() << endl;
+    cout << "ID:     " << student.getID() << endl;
+    cout << "Name:   " << student.getName() << endl;
+    cout << "Year:   " << student.getYear() << endl;
+    cout << "Gender: " << student.getGender() << endl;
     cout << endl;
     return;
 }
 
 void QueryCourse::go()
 {
-    Course* course = getCourseFromInput();
-    if(!course)
-    {
-        cout << "Course does not exist" << endl << endl;
-        return;
-    }
+    string code = getCodeFromInput();
+    Course course = doQueryCourse(code);
 
     cout << endl;
-    cout << "Code:   " << course->getCode() << endl;
-    cout << "Name:   " << course->getName() << endl;
-    cout << "Credit: " << course->getCredit() << endl;
+    cout << "Code:   " << course.getCode() << endl;
+    cout << "Name:   " << course.getName() << endl;
+    cout << "Credit: " << course.getCredit() << endl;
     cout << endl;
     return;
 }
 
 void QueryRegistration::go()
 {
-    Student* student = getStudentFromInput();
-    if(!student)
-    {
-        cout << "Student does not exist" << endl << endl;
-        return;
-    }
+    string ID = getStuIDFromInput();
+    doQueryStudent(ID);
 
-    Course* course = getCourseFromInput();
-    if(!course)
-    {
-        cout << "Course does not exist" << endl << endl;
-        return;
-    }
+    string code = getCodeFromInput();
+    doQueryCourse(code);
 
-    Registration* regRecord = doQueryRegistration(Registration(student, record));
-    if(!regRecord)
-    {
-        cout << "The registration record does not exist" << endl << endl;
-        return;
-    }
+    Registration regRecord = doQueryRegistration(ID, code);
 
     cout << endl;
-    cout << "Student ID:  " << regRecord->getID() << endl;
-    cout << "Course Code: " << regRecord->getCode() << endl;
-    cout << "Exam Mark:   " << regRecord->getMark() << endl;
+    cout << "Student ID:  " << regRecord.getID() << endl;
+    cout << "Course Code: " << regRecord.getCode() << endl;
+    cout << "Exam Mark:   " << regRecord.getMark() << endl;
     cout << endl;
 
     return;
@@ -563,9 +441,8 @@ void ReportCourse::go()
 
 void ReportCourseByStudent::go()
 {
-    Student* student = getStudentFromInput();
-    if(!student)
-        cout << "Student not exist" << endl << endl;
+    string ID = getStuIDFromInput();
+    Student student = doQueryStudent(ID);
     else if(Write2HTML_CourseByStudent(student))
         cout << "Output successful" << endl << endl;
 }

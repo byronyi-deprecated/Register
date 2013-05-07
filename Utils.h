@@ -4,8 +4,17 @@
 #include "Record.h"
 using namespace std;
 
-Student getStudentFromInput() const;
-Course getCourseFromInput() const;
+string getStuIDFromInput() const;
+string getCodeFromInput() const;
+
+string getStuNameFromInput(string _name = string()) const;
+unsigned int getStuYearFromInput(unsigned _year = 99) const;
+char getStuGenderFromInput(char _gender = '\0') const;
+
+string getCourseNameFromInput(string _name = string()) const;
+unsigned int getCourseCreditFromInput(unsigned int credit = 99) const;
+
+unsigned int getExamMarkFromInput(unsigned int _mark = NA_EXAM_MARK) const;
 
 bool parseStuID(const string&);
 bool parseStuName(const string&);

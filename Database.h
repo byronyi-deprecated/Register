@@ -19,21 +19,35 @@ class Database
 {
 public:
 
+    //============================================
+    // All query and delete method will throw
+    // an exception while given key doesn't exist
+    // however, insert and modify method will not
+    // throw any exception.
+    //
+    // So, make sure all the exceptions from
+    // query and delete methods are properly
+    // handled in your own codes.
+    //============================================
+
     static bool doInsertStudent(const Student&);
     static bool doInsertCourse(const Course&);
-    static bool doInsertRegistration(const Student&, const Course&);
+    static bool doInsertRegistration(const Registration&);
 
-    static bool doDeleteStudent(const Student&);
-    static bool doDeleteCourse(const Course&);
-    static bool doDeleteRegistration(const Student&, const Course&);
+    static bool doDeleteStudent(const string& stuID);
+    static bool doDeleteCourse(const string& code);
+    static bool doDeleteRegistration(const string& stuID, const string& code);
 
-    static bool doQueryStudent(const Student&);
-    static bool doQueryCourse(const Course&);
-    static bool doQueryRegistration(const Student&, const Course&);
+    static Student doQueryStudent(const string& stuID);
+    static Course doQueryCourse(const string& code);
+    static Registration doQueryRegistration(const string& stuID, const string& code);
 
-    static bool doModifyStudent(const Student&);
-    static bool doModifyCourse(const Course&);
-    static bool doModifyRegistration(const Student&, const Course&);
+    static bool doModifyStudent(const string& stuID, const string& name,
+                                const unsigned int& year, const char& gender);
+    static bool doModifyCourse(const string& courseCode, const string& name,
+                               const unsigned int& credit);
+    static bool doModifyRegistration(const string& stuID, const string& name,
+                                     const unsigned int& mark);
 
     static bool WriteToBinary(string);
     static bool ReadFromBinary(string);

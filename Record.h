@@ -20,10 +20,20 @@
 #include <list>
 using namespace std;
 
+size_t hash(string key) const
+{
+    size_t sum = 0;
+    for(unsigned int i = 0; i != key.length(); ++i)
+    {
+        sum += (key.c_str())[i];
+    }
+    return sum;
+}
+
 class Record
 {
 public:
-    virtual unsigned int getKey() const = 0;
+    virtual size_t getKey() const = 0;
 };
 
 class Student : public Record
@@ -34,15 +44,7 @@ public:
 
     void addCourse(Course* course) {courses.push_back(course);}
 
-    unsigned int getKey() const {
-        unsigned int sum = 0;
-        for(unsigned int i = 0; i != ID.length(); ++i)
-        {
-            sum += (ID.c_str())[i];
-        }
-        return sum;
-    }
-
+    size_t getKey() const {return hash(ID);}
     string getID() const {return ID;}
     string getName() const {return name;}
     unsigned int getYear() const {return year;}
@@ -71,14 +73,7 @@ public:
 
     void addStudent(Student* student) {students.push_back(student);}
 
-    unsigned int getKey() const {
-        unsigned int sum = 0;
-        for(unsigned int i = 0; i != code.length(); ++i)
-        {
-            sum += (code.c_str())[i];
-        }
-        return sum;
-    }
+    size_t getKey() const {return hash(code);}
     string getCode() const {return code;}
     string getName() const {return name;}
     unsigned int getCredit() const {return credit;}
@@ -109,11 +104,11 @@ public:
 
     void setMark(unsigned int m) {mark = m;}
 
-    bool operator==(Registration r) {return ID.compare(r.ID) == 0 && code.compare(r.ID) == 0;}
+    bool operator==(Registration r) {return ID.compare(r.ID) == 0 && code.compare(r.code) == 0;}
     bool operator!=(Registration r) {return !((*this) == r);}
     bool operator<(Registration r) {
         if(ID.compare(r.ID) == -1) return true;
-        else if(ID.compare(r.ID) == 0 && code.compare(r.ID) == -1) return true;
+        else if(ID.compare(r.ID) == 0 && code.compare(r.code) == -1) return true;
         else return false;
     }
 
@@ -123,30 +118,42 @@ private:
     unsigned int mark;
 };
 
-struct StudentIdx
+struct RegRecordIdx : public Record
 {
-    StudentIdx(string id, Registration* r = 0) : ID(id), reg(r) {}
-    string ID;
-    Registration* reg;
+    virtual size_t getKey() const = 0;
+    list<Registration*> getReg() const {return reg;}
+    bool addReg(Registration* r) {reg.push_back(r);}
 
-    unsigned int getKey() const {return student->getKey();}
-
-    bool operator==(StudentIdx idx) {return student == idx.student;}
-    bool operator!=(StudentIdx idx) {return !((*this) == idx);}
-    bool operator<(StudentIdx idx) {return *student < *(idx.student);}
+private:
+    list<Registration*> reg;
 };
 
-struct CourseIdx
+struct StudentIdx : public RegRecordIdx
 {
-    CourseIdx(string c, Registration* r = 0) : code(c), reg(r) {}
-    string code;
-    Registration* reg;
+    StudentIdx(string id) : ID(id) {}
 
-    unsigned int getKey() const {return course->getKey();}
+    size_t getKey() const {return student->getKey();}
 
-    bool operator==(CourseIdx idx) {return code == idx.code;}
+    bool operator==(StudentIdx idx) {return ID.compare(idx.ID) == 0;}
+    bool operator!=(StudentIdx idx) {return !((*this) == idx);}
+    bool operator<(StudentIdx idx) {return ID.compare(idx.ID) == -1;}
+
+private:
+    string ID;
+};
+
+struct CourseIdx : public RegRecordIdx
+{
+    CourseIdx(string c) : code(c) {}
+
+    size_t getKey() const {return course->getKey();}
+
+    bool operator==(CourseIdx idx) {return code.compare(idx.code) == 0;}
     bool operator!=(CourseIdx idx) {return !((*this) == idx);}
-    bool operator<(CourseIdx idx) {return *course < *(idx.course);}
+    bool operator<(CourseIdx idx) {return code.compare(idx.code) == -1;}
+
+private:
+    string code;
 };
 
 #endif // RECORD_H

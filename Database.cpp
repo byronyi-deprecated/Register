@@ -10,7 +10,7 @@ bool Database::doInsertCourse(const Course& course)
     return courseRecord.insert(course);
 }
 
-bool Database::doInsertRegistration(const Student& student, const Course& course)
+bool Database::doInsertRegistration(const Registration& regRecord)
 {
     Student* student_ptr = studentRecord.search(student);
     Course* course_ptr = courseRecord.search(course);
@@ -28,7 +28,7 @@ bool Database::doInsertRegistration(const Student& student, const Course& course
 }
 
 
-bool Database::doDeleteStudent(const Student& student)
+bool Database::doDeleteStudent(const string& stuID)
 {
     Student* student_ptr = studentRecord.search(student);
 
@@ -49,7 +49,7 @@ bool Database::doDeleteStudent(const Student& student)
     return true;
 }
 
-bool Database::doDeleteCourse(const Course& course)
+bool Database::doDeleteCourse(const string& code)
 {
     Course* course_ptr = courseRecord.search(course);
 
@@ -70,25 +70,42 @@ bool Database::doDeleteCourse(const Course& course)
     return true;
 }
 
-bool Database::doDeleteRegistration(const Student& student, const Course& course)
+bool Database::doDeleteRegistration(const string& stuID, const string& code)
 {
 
 }
 
 
-Student Database::doQueryStudent(const Student&) const
+Student Database::doQueryStudent(string stuID) const
 {
-    return studentRecord.search(Student(stuID));
+    string studentError = "Student does not exist";
+
+    Student* student = studentRecord.search(Student(stuID));
+
+    if(!student) throw studentError;
+
+    return *student;
 }
 
-Course Database::doQueryCourse(const Course&) const
+Course Database::doQueryCourse(string code) const
 {
-    return courseRecord.search(Course(code));
+    string courseError = "Course does not exist";
+
+    Course* course = courseRecord.search(Course(code));
+
+    if(!course) throw courseError;
+
+    return *course;
 }
 
-Registration Database::doQueryRegistration(const Registration&) const
+Registration Database::doQueryRegistration(string stuID, string code) const
 {
-    return regRecord.search(Registration(student, course));
+    string regError = "Registration does not exist";
+
+    Registration* registration = regRecord.search(Registration(stuID, code));
+
+    if(!registration) throw regError;
+    return *registration;
 }
 
 bool Database::doModifyStudent(Student*)

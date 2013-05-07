@@ -3,7 +3,7 @@
 #include <iostream>
 
 using namespace Database;
-Student getStudentFromInput() const
+string getStuIDFromInput() const
 {
     cout << "Enter the student ID: ";
     string ID;
@@ -11,10 +11,10 @@ Student getStudentFromInput() const
     while(!parseStuID(ID))
         cin >> ID;
 
-    return doQueryStudent(ID);
+    return ID;
 }
 
-Course getCourseFromInput() const
+string getCodeFromInput() const
 {
     cout << "Enter the course code: ";
     string code;
@@ -22,7 +22,112 @@ Course getCourseFromInput() const
     while(!parseCourseCode(code))
         cin >> code;
 
-    return doQueryCourse(code);
+    return code;
+}
+
+string getStuNameFromInput(string _name) const
+{
+    cout << "Enter the student name ";
+
+    if(_name != string())
+        cout << " [" << _name << "]";
+    cout << ": ";
+
+    string name;
+    cin >> name;
+    while(!parseStuName(name))
+        cin >> name;
+
+    return name;
+}
+
+unsigned int getStuYearFromInput(unsigned _year) const
+{
+    cout << "Enter the student year ";
+
+    if(_year == 99)
+        cout << "[1-3]: ";
+    else
+        cout << "[" << _year << "]: ";
+
+    unsigned int year;
+    cin >> year;
+    while(!parseStuYear(year))
+        cin >> year;
+
+    return year;
+}
+
+char getStuGenderFromInput(char _gender) const
+{
+    cout << "Enter the student gender ";
+    if(_gender == '\0')
+        cout << " [M,F]: ";
+    else
+        cout << " [" << _gender << "]: ";
+
+    char gender;
+    cin >> gender;
+    while(!parseStuGender(gender))
+        cin >> gender;
+
+    gender = (gender == 'm')? 'M' : gender;
+    gender = (gender == 'f')? 'F' : gender;
+
+    return gender;
+}
+
+string getCourseNameFromInput(string _name = string()) const
+{
+    cout << "Enter the course name ";
+
+    if(_name != string())
+        cout << " [" << _name << "]";
+    cout << ": ";
+
+    string name;
+    cin >> name;
+    while(!parseCourseName(name))
+        cin >> name;
+
+    return name;
+}
+
+unsigned int getCourseCreditFromInput(unsigned int credit = 99) const
+{
+    cout << "Enter the course credit ";
+
+    if(_year == 99)
+        cout << "[0-5]: ";
+    else
+        cout << "[" << credit << "]: ";
+
+    unsigned int credit;
+    cin >> credit;
+    while(!parseCourseCredit(credit))
+        cin >> credit;
+
+    return credit;
+}
+
+unsigned int getExamMarkFromInput(unsigned int _mark = NA_EXAM_MARK) const
+{
+    cout << "Enter the exam mark [";
+    if(regRecord->getMark() == NA_EXAM_MARK)
+        cout << "N/A";
+    else
+        cout << _mark;
+    cout << "]: ";
+
+    unsigned int mark;
+    cin >> mark;
+    while(!parseExamMark(mark))
+        cin >> mark;
+
+    regRecord->setMark(mark);
+    cout << "Modification of exam mark successful" << endl << endl;
+
+    return mark;
 }
 
 bool parseStuID(const string& ID)
