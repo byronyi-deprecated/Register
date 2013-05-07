@@ -42,9 +42,8 @@ public:
     Student(string id, string n = string(), unsigned int y = 0, char g = 0) :
         ID(id), name(n), year(y), gender(g) {}
 
-    void addCourse(Course* course) {courses.push_back(course);}
-
     size_t getKey() const {return hash(ID);}
+
     string getID() const {return ID;}
     string getName() const {return name;}
     unsigned int getYear() const {return year;}
@@ -71,8 +70,6 @@ public:
     Course(string c, string n = string(), unsigned int cd = 0) :
         code(c), name(n), credit(cd) {}
 
-    void addStudent(Student* student) {students.push_back(student);}
-
     size_t getKey() const {return hash(code);}
     string getCode() const {return code;}
     string getName() const {return name;}
@@ -96,7 +93,7 @@ class Registration
 {
 public:
     Registration(string id, string c, unsigned int m  = NA_EXAM_MARK) :
-        ID(s), code(c), mark(m) {}
+        ID(id), code(c), mark(m) {}
 
     string getID() const {return ID;}
     string getCode() const {return code;}
@@ -124,7 +121,7 @@ struct RegRecordIdx : public Record
     list<Registration*> getReg() const {return reg;}
     bool addReg(Registration* r) {reg.push_back(r);}
 
-private:
+protected:
     list<Registration*> reg;
 };
 
@@ -132,7 +129,7 @@ struct StudentIdx : public RegRecordIdx
 {
     StudentIdx(string id) : ID(id) {}
 
-    size_t getKey() const {return student->getKey();}
+    size_t getKey() const {return hash(ID);}
 
     bool operator==(StudentIdx idx) {return ID.compare(idx.ID) == 0;}
     bool operator!=(StudentIdx idx) {return !((*this) == idx);}
@@ -146,7 +143,7 @@ struct CourseIdx : public RegRecordIdx
 {
     CourseIdx(string c) : code(c) {}
 
-    size_t getKey() const {return course->getKey();}
+    size_t getKey() const {return hash(code);}
 
     bool operator==(CourseIdx idx) {return code.compare(idx.code) == 0;}
     bool operator!=(CourseIdx idx) {return !((*this) == idx);}
