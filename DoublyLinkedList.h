@@ -5,14 +5,14 @@
 #include <iostream>
 using namespace std;
 
-template <class T1, class T2>
+template <class T>
 class DoublyLinkedList
 {
     typedef struct Node
     {
         Node* prev;
         Node* next;
-        T1 data;
+        T data;
     } *NodePtr;
 
 public:
@@ -28,7 +28,7 @@ public:
     bool isEmpty() const {return _size == 0;}
     int size() const {return _size;}
 
-    bool insert(const T1& item)
+    bool insert(const T& item)
     {
         NodePtr temp = new Node;
         if(!temp) return false;
@@ -67,7 +67,7 @@ public:
         return false;
     }
 
-    bool remove(const T2& item)
+    bool remove(const T& item)
     {
         if(!_head) return false;
 
@@ -108,7 +108,7 @@ public:
         return false;
     }
 
-    const T1* search(const T2& item) const
+    const T* search(const T& item) const
     {
         NodePtr ptr = _head;
         while(!ptr)

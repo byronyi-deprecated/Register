@@ -72,7 +72,7 @@ bool Database::doDeleteCourse(const Course& course)
 
 bool Database::doDeleteRegistration(const Student& student, const Course& course)
 {
-    Registration* reg_ptr = regRecord.search()
+
 }
 
 
